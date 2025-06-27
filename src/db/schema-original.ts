@@ -120,7 +120,7 @@ export const doctorsTable = pgTable("doctors", {
   availableFromTime: time("available_from_time").notNull(),
   availableToTime: time("available_to_time").notNull(),
   specialty: text("specialty").notNull(),
-  appointmentPriceInCents: integer("appointment_price_in_cents"),
+  appointmentPriceInCents: integer("appointment_price_in_cents").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -135,8 +135,6 @@ export const doctorsTableRelations = relations(
       references: [clinicsTable.id],
     }),
     appointments: many(appointmentsTable),
-    // Adicionando o relacionamento reverso (opcional, se precisar navegar de doctor para services)
-    services: many(servicesTable), // <-- novo relacionamento adicionado aqui
   }),
 );
 
@@ -203,25 +201,3 @@ export const appointmentsTableRelations = relations(
     }),
   }),
 );
-
-// Nova tabela de serviços
-export const servicesTable = pgTable("services", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  doctorId: uuid("doctor_id")
-    .notNull()
-    .references(() => doctorsTable.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  servicePriceInCents: integer("service_price_in_cents").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-});
-
-// Relacionamento da tabela de serviços com doctors
-export const servicesTableRelations = relations(servicesTable, ({ one }) => ({
-  doctor: one(doctorsTable, {
-    fields: [servicesTable.doctorId],
-    references: [doctorsTable.id],
-  }),
-}));

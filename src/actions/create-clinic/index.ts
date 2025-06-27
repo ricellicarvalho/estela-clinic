@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { db } from "@/db";
-import { clinicsTable, usersToClinicsTable } from "@/db/schema";
+import { clinicsTable, usersToClinicsTable } from "@/db/schema-original";
 import { auth } from "@/lib/auth";
 
 export const createClinic = async (name: string) => {
